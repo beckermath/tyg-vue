@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Team generator</title>
+        <h1>Team generator</h1>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <div id="add_players">
+                <p>Player name</p>
+                <input v-model="currentName" placeholder="player name">
+                <p>Player level</p>
+                <p>
+                    1<input type="radio" name="currentLevel" value="1" v-model="currentLevel">
+                    2<input type="radio" name="currentLevel" value="2" v-model="currentLevel">
+                    3<input type="radio" name="currentLevel" value="3" v-model="currentLevel">
+                </p>
+                <button v-on:click="addPlayer">Add Player</button>
+            </div>
+            <div id="player_list">
+                <ul>
+                    <li v-for="player in players">
+                    {{ player.name }} - {{player.level}}
+                    </li>
+                </ul>
+            </div>
+            <div id="create_teams">
+                <p>Number of teams</p>
+                <p>
+                    2<input :disabled="players.length < 2" type="radio" name="numTeams" value="2" v-model="numTeams" v-on:change="createTeams">
+                    4<input :disabled="players.length < 4" type="radio" name="numTeams" value="4" v-model="numTeams" v-on:change="createTeams">
+                </p>
+            </div>
+            <div v-if="numTeams >= 2 && players.length >= 2" id="team1_list">
+                <p>Team 1</p>
+                <ul>
+                    <li v-for="player in team1">
+                    {{ player.name }} - {{player.level}}
+                    </li>
+                </ul>
+            </div>
+            <div v-if="numTeams >= 2 && players.length >= 2" id="team2_list">
+                <p>Team 2</p>
+                <ul>
+                    <li v-for="player in team2">
+                    {{ player.name }} - {{player.level}}
+                    </li>
+                </ul>
+            </div>
+            <div v-if="numTeams == 4 && players.length >= 4" id="team3_list">
+                <p>Team 3</p>
+                <ul>
+                    <li v-for="player in team3">
+                    {{ player.name }} - {{player.level}}
+                    </li>
+                </ul>
+            </div>
+            <div v-if="numTeams == 4 && players.length >= 4" id="team4_list">
+                <p>Team 4</p>
+                <ul>
+                    <li v-for="player in team4">
+                    {{ player.name }} - {{player.level}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    currentName: "",
+                    currentLevel: null,
+                    numTeams: null,
+                    players: [],
+                    team1: [],
+                    team2: [],
+                    team3: [],
+                    team4: [],
+                },
+                methods: {
+                    addPlayer: function () {
+                        if(this.currentName && this.currentLevel){
+                            this.players.push({name: this.currentName, level: this.currentLevel});
+                            this.currentName = "";
+                            this.currentLevel = null;
+                        }
+                    },
+
+                    createTeams: function () {
+                        this.team1 = [];
+                        this.team2 = [];
+                        this.team3 = [];
+                        this.team4 = [];
+
+                        if(this.numTeams && this.players.length >= this.numTeams){
+                            this.players.sort((a, b) => {
+                                return b.level - a.level;
+                            });
+
+                            let counter = 1;
+
+                            for(let i = 0; i < this.players.length; i++){
+                                if(counter === 1){
+                                    this.team1.push(this.players[i]);
+                                }
+                                else if(counter === 2){
+                                    this.team2.push(this.players[i]);
+                                }
+                                else if(counter === 3){
+                                    this.team3.push(this.players[i]);
+                                }
+                                else{
+                                    this.team4.push(this.players[i]);
+                                }
+
+                                counter++;
+
+                                if(counter === parseInt(this.numTeams) + 1){
+                                    counter = 1;
+                                }
+                            }
+                        }
+                    },  
+                }
+            })
+
+        </script>
+    </body>
+</html>
